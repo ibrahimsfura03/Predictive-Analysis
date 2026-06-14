@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+
+{% block title %}My Performance Results{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="fas fa-user-graduate"></i> My Performance Dashboard</h2>
+    <p>Your personalized academic risk assessment and recommendations</p>
+</div>
+
+{% if result %}
+<div class="row">
+    <!-- Risk Status Overview -->
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <h3 class="mb-2">{{ result.name }}</h3>
+                    <p class="text-muted mb-3">{{ result.matric_no }}</p>
+                    
+                    {% if result.risk_level == 'At Risk' %}
+                    <div class="mb-3">
+                        <span class="badge badge-at-risk" style="font-size: 1.5rem; padding: 1rem 2rem;">
+                            <i class="fas fa-exclamation-triangle"></i> AT RISK
+                        </span>
+                    </div>
+                    <div class="alert alert-danger">
+                        <i class="fas fa-bell"></i> <strong>Attention Required:</strong> Your performance indicators need improvement
+                    </div>
+                    {% else %}
+                    <div class="mb-3">
+                        <span class="badge badge-not-at-risk" style="font-size: 1.5rem; padding: 1rem 2rem;">
+                            <i class="fas fa-check-circle"></i> NOT AT RISK
+                        </span>
+                    </div>
+                    <div class="alert alert-success">
+                        <i class="fas fa-trophy"></i> <strong>Great Job!</strong> You're performing well across all metrics
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <hr>
+                
+                <h5 class="mb-4"><i class="fas fa-chart-bar"></i> Your Performance Breakdown</h5>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="card border-0" style="background: linear-gradient(135deg, {% if result.attendance < 60 %}#FEE2E2{% else %}#D1FAE5{% endif %} 0%, {% if result.attendance < 60 %}#FECACA{% else %}#A7F3D0{% endif %} 100%);">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span><i class="fas fa-calendar-check"></i> <strong>Attendance</strong></span>
+                                    {% if result.attendance < 60 %}
+                                    <i class="fas fa-arrow-down text-danger"></i>
+                                    {% else %}
+                                    <i class="fas fa-arrow-up text-success"></i>
+                                    {% endif %}
+                                </div>
+                                <h1 class="mb-2 {% if result.attendance < 60 %}text-danger{% else %}text-success{% endif %}">
+                                    {{ "%.1f"|format(result.attendance) }}%
+                                </h1>
+                                <div class="progress" style="height: 10px;">
+                                    <div class="progress-bar {% if result.attendance < 60 %}bg-danger{% else %}bg-success{% endif %}" 
+                                         style="width: {{ result.attendance }}%"></div>
+                                </div>
+                                <small class="text-muted mt-2 d-block">Target: 60% | {% if result.attendance < 60 %}Below{% else %}Above{% endif %} Threshold</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card border-0" style="background: linear-gradient(135deg, {% if result.ca_score < 50 %}#FEE2E2{% else %}#D1FAE5{% endif %} 0%, {% if result.ca_score < 50 %}#FECACA{% else %}#A7F3D0{% endif %} 100%);">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span><i class="fas fa-file-alt"></i> <strong>CA Score</strong></span>
+                                    {% if result.ca_score < 50 %}
+                                    <i class="fas fa-arrow-down text-danger"></i>
+                                    {% else %}
+                                    <i class="fas fa-arrow-up text-success"></i>
+                                    {% endif %}
+                                </div>
+                                <h1 class="mb-2 {% if result.ca_score < 50 %}text-danger{% else %}text-success{% endif %}">
+                                    {{ "%.1f"|format(result.ca_score) }}
+                                </h1>
+                                <div class="progress" style="height: 10px;">
+                                    <div class="progress-bar {% if result.ca_score < 50 %}bg-danger{% else %}bg-success{% endif %}" 
+                                         style="width: {{ result.ca_score }}%"></div>
+                                </div>
+                                <small class="text-muted mt-2 d-block">Target: 50 | {% if result.ca_score < 50 %}Below{% else %}Above{% endif %} Threshold</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card border-0" style="background: linear-gradient(135deg, {% if result.exam_score < 50 %}#FEE2E2{% else %}#D1FAE5{% endif %} 0%, {% if result.exam_score < 50 %}#FECACA{% else %}#A7F3D0{% endif %} 100%);">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span><i class="fas fa-clipboard-check"></i> <strong>Exam Score</strong></span>
+                                    {% if result.exam_score < 50 %}
+                                    <i class="fas fa-arrow-down text-danger"></i>
+                                    {% else %}
+                                    <i class="fas fa-arrow-up text-success"></i>
+                                    {% endif %}
+                                </div>
+                                <h1 class="mb-2 {% if result.exam_score < 50 %}text-danger{% else %}text-success{% endif %}">
+                                    {{ "%.1f"|format(result.exam_score) }}
+                                </h1>
+                                <div class="progress" style="height: 10px;">
+                                    <div class="progress-bar {% if result.exam_score < 50 %}bg-danger{% else %}bg-success{% endif %}" 
+                                         style="width: {{ result.exam_score }}%"></div>
+                                </div>
+                                <small class="text-muted mt-2 d-block">Target: 50 | {% if result.exam_score < 50 %}Below{% else %}Above{% endif %} Threshold</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr class="my-4">
+                
+                <h5 class="mb-3"><i class="fas fa-tasks"></i> Personalized Action Plan</h5>
+                {% if result.risk_level == 'At Risk' %}
+                <div class="alert alert-warning">
+                    <h6 class="mb-3"><i class="fas fa-list-check"></i> Steps to Improve Your Performance:</h6>
+                    <ol class="mb-0">
+                        {% for recommendation in result.recommendation.split(', ') %}
+                        <li class="mb-2"><strong>{{ recommendation }}</strong></li>
+                        {% endfor %}
+                    </ol>
+                </div>
+                {% else %}
+                <div class="alert alert-success">
+                    <h6 class="mb-2"><i class="fas fa-star"></i> {{ result.recommendation }}</h6>
+                    <p class="mb-0">Continue maintaining this excellent performance level!</p>
+                </div>
+                {% endif %}
+                
+                <div class="mt-4 p-3" style="background: var(--light-bg); border-radius: 0.75rem;">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle"></i> 
+                        <strong>Last Updated:</strong> {{ result.prediction_date }} | 
+                        <strong>Assessment Model:</strong> AI-Powered Decision Tree Analysis
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Visualization & Tips -->
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-radar"></i> Performance Radar</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="studentRadar" height="280"></canvas>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle"></i> Understanding Risk Levels</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-3"><small>You are marked as "At Risk" if <strong>ANY</strong> of these conditions are met:</small></p>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <i class="fas fa-circle-dot text-danger me-2"></i>
+                        <small>Attendance below 60%</small>
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-circle-dot text-danger me-2"></i>
+                        <small>CA Score below 50</small>
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-circle-dot text-danger me-2"></i>
+                        <small>Exam Score below 50</small>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-question-circle"></i> Need Help?</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-0"><small>Contact your academic advisor or course instructor for personalized support and guidance.</small></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Student Performance Radar Chart
+    const ctx = document.getElementById('studentRadar').getContext('2d');
+    new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: ['Attendance', 'CA Score', 'Exam Score'],
+            datasets: [{
+                label: 'Your Performance',
+                data: [{{ result.attendance }}, {{ result.ca_score }}, {{ result.exam_score }}],
+                backgroundColor: 'rgba(79, 70, 229, 0.2)',
+                borderColor: 'rgba(79, 70, 229, 1)',
+                borderWidth: 3,
+                pointBackgroundColor: 'rgba(79, 70, 229, 1)',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 6
+            }, {
+                label: 'Required Threshold',
+                data: [60, 50, 50],
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                borderColor: 'rgba(239, 68, 68, 0.8)',
+                borderWidth: 2,
+                borderDash: [5, 5],
+                pointBackgroundColor: 'rgba(239, 68, 68, 1)',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        stepSize: 25,
+                        font: {
+                            family: 'Inter',
+                            size: 11
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        font: {
+                            family: 'Inter',
+                            size: 11
+                        },
+                        padding: 15
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+{% else %}
+<div class="card">
+    <div class="card-body text-center p-5">
+        <i class="fas fa-chart-line" style="font-size: 4rem; color: var(--text-secondary); margin-bottom: 1.5rem;"></i>
+        <h4 class="text-muted mb-3">No Performance Data Available</h4>
+        <p class="text-muted mb-4">Your performance hasn't been analyzed yet. Please contact your administrator.</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

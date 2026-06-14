@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Predict Performance{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="fas fa-brain"></i> AI Performance Prediction</h2>
+    <p>Advanced machine learning analysis for student academic risk assessment</p>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-robot"></i> Select Student for Analysis</h5>
+            </div>
+            <div class="card-body">
+                {% if students %}
+                <p class="text-muted mb-4">
+                    <i class="fas fa-info-circle"></i> 
+                    The system will analyze the student's performance data using a Decision Tree Classifier model 
+                    trained on 200+ student records with 97.5% accuracy.
+                </p>
+                
+                <form method="POST">
+                    <div class="mb-4">
+                        <label class="form-label"><strong>Student Selection</strong></label>
+                        <select class="form-select form-select-lg" name="student_id" id="studentSelect" required>
+                            <option value="">Choose a student for prediction...</option>
+                            {% for student in students %}
+                            <option value="{{ student.id }}" 
+                                    data-name="{{ student.name }}"
+                                    data-matric="{{ student.matric_no }}"
+                                    data-dept="{{ student.department }}"
+                                    data-level="{{ student.level }}">
+                                {{ student.matric_no }} - {{ student.name }} ({{ student.department }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div id="studentPreview" class="alert alert-info d-none mb-4">
+                        <h6 class="mb-3"><i class="fas fa-user-graduate"></i> Selected Student Details:</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <small class="text-muted">Name:</small>
+                                <p class="mb-2" id="previewName">-</p>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted">Matric Number:</small>
+                                <p class="mb-2" id="previewMatric">-</p>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted">Department:</small>
+                                <p class="mb-0" id="previewDept">-</p>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted">Level:</small>
+                                <p class="mb-0" id="previewLevel">-</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-chart-line"></i> Run AI Prediction Analysis
+                        </button>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </a>
+                    </div>
+                </form>
+                {% else %}
+                <div class="text-center p-5">
+                    <i class="fas fa-users-slash" style="font-size: 4rem; color: var(--text-secondary); margin-bottom: 1.5rem;"></i>
+                    <h5 class="text-muted mb-3">No Students Available for Prediction</h5>
+                    <p class="text-muted mb-4">Please add students to the system before running predictions.</p>
+                    <a href="{{ url_for('add_student') }}" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> Add First Student
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-lightbulb"></i> Risk Assessment Criteria</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-3"><strong>A student is classified as "At Risk" if ANY of:</strong></p>
+                <div class="mb-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-calendar-times text-danger me-2"></i>
+                        <span>Attendance < 60%</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-file-excel text-danger me-2"></i>
+                        <span>CA Score < 50</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-clipboard-question text-danger me-2"></i>
+                        <span>Exam Score < 50</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-graduation-cap"></i> ML Model Info</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <small class="text-muted">Algorithm:</small>
+                    <p class="mb-0"><strong>Decision Tree Classifier</strong></p>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">Training Data:</small>
+                    <p class="mb-0"><strong>200 Student Records</strong></p>
+                </div>
+                <div>
+                    <small class="text-muted">Model Accuracy:</small>
+                    <p class="mb-0"><strong class="text-success">97.5%</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('studentSelect').addEventListener('change', function() {
+        const preview = document.getElementById('studentPreview');
+        const selected = this.options[this.selectedIndex];
+        
+        if (this.value) {
+            document.getElementById('previewName').textContent = selected.dataset.name;
+            document.getElementById('previewMatric').textContent = selected.dataset.matric;
+            document.getElementById('previewDept').textContent = selected.dataset.dept;
+            document.getElementById('previewLevel').textContent = selected.dataset.level + ' Level';
+            preview.classList.remove('d-none');
+        } else {
+            preview.classList.add('d-none');
+        }
+    });
+</script>
+{% endblock %}

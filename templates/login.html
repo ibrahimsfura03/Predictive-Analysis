@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Student Performance Prediction{% endblock %}
+
+{% block content %}
+<div class="login-card">
+    <div class="login-header">
+        <i class="fas fa-chart-bar"></i>
+        <h3>Student Performance Prediction</h3>
+        <p>Access your academic dashboard</p>
+    </div>
+    
+    <!-- Flash Messages at Top -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert" style="margin-bottom: 1.5rem;">
+                <i class="fas fa-{{ 'exclamation-circle' if category == 'error' else 'check-circle' if category == 'success' else 'info-circle' }}"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <div class="login-tabs" id="loginTabs">
+        <div class="login-tab active" data-tab="admin">
+            <i class="fas fa-user-shield"></i> Administrator
+        </div>
+        <div class="login-tab" data-tab="student">
+            <i class="fas fa-user-graduate"></i> Student
+        </div>
+    </div>
+    
+    <form method="POST" id="loginForm">
+        <input type="hidden" name="user_type" id="userTypeInput" value="admin">
+        
+        <div class="mb-4">
+            <label class="form-label" id="usernameLabel">
+                <i class="fas fa-user-shield"></i> Admin Username
+            </label>
+            <input type="text" class="form-control" name="username" placeholder="Enter your username" required>
+        </div>
+        
+        <div class="mb-4">
+            <label class="form-label">
+                <i class="fas fa-lock"></i> Password
+            </label>
+            <input type="password" class="form-control" name="password" placeholder="Enter your password" required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary w-100" style="padding: 0.75rem;">
+            <i class="fas fa-sign-in-alt"></i> Login
+        </button>
+    </form>
+    
+
+</div>
+
+<style>
+    .login-tabs {
+        display: flex;
+        gap: 0;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .login-tab {
+        flex: 1;
+        padding: 1rem;
+        text-align: center;
+        background: var(--light-bg);
+        border-bottom: 3px solid transparent;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-weight: 600;
+        font-size: 0.875rem;
+    }
+    
+    .login-tab i {
+        margin-right: 0.5rem;
+    }
+    
+    .login-tab:hover {
+        background: #EEEEEE;
+    }
+    
+    .login-tab.active {
+        background: white;
+        border-bottom-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+</style>
+
+<script>
+    const tabs = document.querySelectorAll('.login-tab');
+    const userTypeInput = document.getElementById('userTypeInput');
+    const usernameLabel = document.getElementById('usernameLabel');
+    const loginForm = document.getElementById('loginForm');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            tabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            const tabType = this.getAttribute('data-tab');
+            userTypeInput.value = tabType;
+            
+            if (tabType === 'admin') {
+                usernameLabel.innerHTML = '<i class="fas fa-user-shield"></i> Admin Username';
+                loginForm.querySelector('input[name="username"]').placeholder = 'Enter admin username';
+            } else {
+                usernameLabel.innerHTML = '<i class="fas fa-id-card"></i> Matric Number';
+                loginForm.querySelector('input[name="username"]').placeholder = 'Enter your matric number';
+            }
+        });
+    });
+</script>
+{% endblock %}

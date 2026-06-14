@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction Result{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="fas fa-chart-line"></i> AI Prediction Analysis Report</h2>
+    <p>Comprehensive student performance risk assessment</p>
+</div>
+
+<div class="row">
+    <!-- Main Result Card -->
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-user-graduate"></i> Student Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h3 class="mb-2">{{ result.name }}</h3>
+                        <p class="text-muted mb-0"><i class="fas fa-id-card"></i> {{ result.matric_no }}</p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        {% if result.risk_level == 'At Risk' %}
+                        <div class="mb-2">
+                            <span class="badge badge-at-risk" style="font-size: 1.25rem; padding: 0.75rem 1.5rem;">
+                                <i class="fas fa-exclamation-triangle"></i> AT RISK
+                            </span>
+                        </div>
+                        <small class="text-danger"><i class="fas fa-warning"></i> Immediate attention required</small>
+                        {% else %}
+                        <div class="mb-2">
+                            <span class="badge badge-not-at-risk" style="font-size: 1.25rem; padding: 0.75rem 1.5rem;">
+                                <i class="fas fa-check-circle"></i> NOT AT RISK
+                            </span>
+                        </div>
+                        <small class="text-success"><i class="fas fa-thumbs-up"></i> Performance within acceptable range</small>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <h6 class="mb-3"><i class="fas fa-chart-bar"></i> Performance Metrics Analysis</h6>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="metric-card {% if result.attendance < 60 %}border-danger{% else %}border-success{% endif %}" style="border-left: 4px solid; padding: 1rem; background: var(--light-bg); border-radius: 0.5rem;">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted"><i class="fas fa-calendar-check"></i> Attendance</span>
+                                {% if result.attendance < 60 %}
+                                <i class="fas fa-arrow-down text-danger"></i>
+                                {% else %}
+                                <i class="fas fa-arrow-up text-success"></i>
+                                {% endif %}
+                            </div>
+                            <h2 class="mb-1 {% if result.attendance < 60 %}text-danger{% else %}text-success{% endif %}">
+                                {{ "%.1f"|format(result.attendance) }}%
+                            </h2>
+                            <small class="text-muted">Threshold: 60%</small>
+                            <div class="progress mt-2" style="height: 8px;">
+                                <div class="progress-bar {% if result.attendance < 60 %}bg-danger{% else %}bg-success{% endif %}" 
+                                     style="width: {{ result.attendance }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="metric-card {% if result.ca_score < 50 %}border-danger{% else %}border-success{% endif %}" style="border-left: 4px solid; padding: 1rem; background: var(--light-bg); border-radius: 0.5rem;">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted"><i class="fas fa-file-alt"></i> CA Score</span>
+                                {% if result.ca_score < 50 %}
+                                <i class="fas fa-arrow-down text-danger"></i>
+                                {% else %}
+                                <i class="fas fa-arrow-up text-success"></i>
+                                {% endif %}
+                            </div>
+                            <h2 class="mb-1 {% if result.ca_score < 50 %}text-danger{% else %}text-success{% endif %}">
+                                {{ "%.1f"|format(result.ca_score) }}
+                            </h2>
+                            <small class="text-muted">Threshold: 50</small>
+                            <div class="progress mt-2" style="height: 8px;">
+                                <div class="progress-bar {% if result.ca_score < 50 %}bg-danger{% else %}bg-success{% endif %}" 
+                                     style="width: {{ result.ca_score }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="metric-card {% if result.exam_score < 50 %}border-danger{% else %}border-success{% endif %}" style="border-left: 4px solid; padding: 1rem; background: var(--light-bg); border-radius: 0.5rem;">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted"><i class="fas fa-clipboard-check"></i> Exam Score</span>
+                                {% if result.exam_score < 50 %}
+                                <i class="fas fa-arrow-down text-danger"></i>
+                                {% else %}
+                                <i class="fas fa-arrow-up text-success"></i>
+                                {% endif %}
+                            </div>
+                            <h2 class="mb-1 {% if result.exam_score < 50 %}text-danger{% else %}text-success{% endif %}">
+                                {{ "%.1f"|format(result.exam_score) }}
+                            </h2>
+                            <small class="text-muted">Threshold: 50</small>
+                            <div class="progress mt-2" style="height: 8px;">
+                                <div class="progress-bar {% if result.exam_score < 50 %}bg-danger{% else %}bg-success{% endif %}" 
+                                     style="width: {{ result.exam_score }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <h6 class="mb-3"><i class="fas fa-lightbulb"></i> AI-Generated Recommendations</h6>
+                {% if result.risk_level == 'At Risk' %}
+                <div class="alert alert-danger">
+                    <h6 class="mb-3"><i class="fas fa-exclamation-circle"></i> Action Items Required:</h6>
+                    <ul class="mb-0">
+                        {% for recommendation in result.recommendation.split(', ') %}
+                        <li class="mb-2"><strong>{{ recommendation }}</strong></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% else %}
+                <div class="alert alert-success">
+                    <h6 class="mb-2"><i class="fas fa-star"></i> Excellent Performance!</h6>
+                    <p class="mb-0">{{ result.recommendation }}</p>
+                </div>
+                {% endif %}
+                
+                <div class="mt-4 p-3 bg-light rounded">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle"></i> 
+                        <strong>Analysis Date:</strong> {{ result.prediction_date }} | 
+                        <strong>Model:</strong> Decision Tree Classifier | 
+                        <strong>Confidence:</strong> 97.5%
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Visualization Sidebar -->
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-pie"></i> Performance Distribution</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="performanceRadar" height="250"></canvas>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-bullseye"></i> Risk Factors</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="riskFactorChart" height="200"></canvas>
+            </div>
+        </div>
+        
+        <div class="d-grid gap-2">
+            <a href="{{ url_for('predict_performance') }}" class="btn btn-primary">
+                <i class="fas fa-redo"></i> Predict Another Student
+            </a>
+            <a href="{{ url_for('prediction_history') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-history"></i> View All History
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Radar Chart for Performance Distribution
+    const radarCtx = document.getElementById('performanceRadar').getContext('2d');
+    new Chart(radarCtx, {
+        type: 'radar',
+        data: {
+            labels: ['Attendance', 'CA Score', 'Exam Score'],
+            datasets: [{
+                label: 'Student Performance',
+                data: [{{ result.attendance }}, {{ result.ca_score }}, {{ result.exam_score }}],
+                backgroundColor: 'rgba(79, 70, 229, 0.2)',
+                borderColor: 'rgba(79, 70, 229, 1)',
+                borderWidth: 2,
+                pointBackgroundColor: 'rgba(79, 70, 229, 1)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgba(79, 70, 229, 1)'
+            }, {
+                label: 'Threshold',
+                data: [60, 50, 50],
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                borderColor: 'rgba(239, 68, 68, 1)',
+                borderWidth: 2,
+                borderDash: [5, 5],
+                pointBackgroundColor: 'rgba(239, 68, 68, 1)',
+                pointBorderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        stepSize: 20,
+                        font: {
+                            family: 'Inter'
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        font: {
+                            family: 'Inter',
+                            size: 12
+                        }
+                    }
+                }
+            }
+        }
+    });
+    
+    // Risk Factor Bar Chart
+    const riskCtx = document.getElementById('riskFactorChart').getContext('2d');
+    const riskFactors = [];
+    const riskColors = [];
+    
+    {% if result.attendance < 60 %}
+    riskFactors.push('Low Attendance');
+    riskColors.push('#EF4444');
+    {% endif %}
+    {% if result.ca_score < 50 %}
+    riskFactors.push('Low CA Score');
+    riskColors.push('#F59E0B');
+    {% endif %}
+    {% if result.exam_score < 50 %}
+    riskFactors.push('Low Exam Score');
+    riskColors.push('#DC2626');
+    {% endif %}
+    
+    if (riskFactors.length > 0) {
+        new Chart(riskCtx, {
+            type: 'bar',
+            data: {
+                labels: riskFactors,
+                datasets: [{
+                    label: 'Risk Level',
+                    data: riskFactors.map(() => 1),
+                    backgroundColor: riskColors,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        display: false
+                    },
+                    y: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    } else {
+        document.getElementById('riskFactorChart').parentElement.innerHTML = '<p class="text-center text-success"><i class="fas fa-check-circle"></i> No Risk Factors Detected</p>';
+    }
+</script>
+{% endblock %}

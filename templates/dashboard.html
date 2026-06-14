@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="fas fa-dashboard"></i> Dashboard Overview</h2>
+    <p>Comprehensive analytics of student performance predictions</p>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="stat-card">
+            <div class="stat-card-icon primary">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="stat-card-label">Total Predictions</div>
+            <div class="stat-card-value">{{ stats.total }}</div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="stat-card">
+            <div class="stat-card-icon danger">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="stat-card-label">Students At Risk</div>
+            <div class="stat-card-value">{{ stats.at_risk }}</div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="stat-card">
+            <div class="stat-card-icon success">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-card-label">Students Not At Risk</div>
+            <div class="stat-card-value">{{ stats.not_at_risk }}</div>
+        </div>
+    </div>
+</div>
+
+{% if stats.total > 0 %}
+<!-- Charts -->
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-pie-chart"></i> Risk Distribution</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="pieChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-bar"></i> Risk Factors Analysis</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="barChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Pie Chart - Risk Distribution
+    const pieCtx = document.getElementById('pieChart').getContext('2d');
+    new Chart(pieCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['At Risk', 'Not At Risk'],
+            datasets: [{
+                data: [{{ stats.at_risk }}, {{ stats.not_at_risk }}],
+                backgroundColor: ['#EF4444', '#10B981'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        font: {
+                            family: 'Inter',
+                            size: 13
+                        }
+                    }
+                }
+            }
+        }
+    });
+    
+    // Bar Chart - Risk Factors
+    const barCtx = document.getElementById('barChart').getContext('2d');
+    new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Low Attendance', 'Low CA Score', 'Low Exam Score'],
+            datasets: [{
+                label: 'Number of Students',
+                data: [{{ risk_factors.low_attendance }}, {{ risk_factors.low_ca }}, {{ risk_factors.low_exam }}],
+                backgroundColor: ['#F59E0B', '#EF4444', '#DC2626'],
+                borderRadius: 8,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1,
+                        font: {
+                            family: 'Inter'
+                        }
+                    },
+                    grid: {
+                        display: true,
+                        color: '#F3F4F6'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            family: 'Inter'
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+</script>
+{% else %}
+<div class="card">
+    <div class="card-body text-center p-5">
+        <i class="fas fa-chart-pie" style="font-size: 4rem; color: var(--text-secondary); margin-bottom: 1rem;"></i>
+        <h4 class="text-muted mb-3">No Prediction Data Available</h4>
+        <p class="text-muted mb-4">Start by adding students and running predictions to see analytics and visualizations.</p>
+        <a href="{{ url_for('predict_performance') }}" class="btn btn-primary">
+            <i class="fas fa-brain"></i> Run First Prediction
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,2 @@
+id,matric_no,name,department,level,attendance,ca_score,exam_score,password_hash
+1,cis/ste/22/1176,ibrahim,soft,400,90.0,89.0,80.0,scrypt:32768:8:1$LZpM9fwbQjy8XQCc$210b1f24f0733a4a31a242488e121b955bcf03a16cb871c16750186c52d49eff8a92a25207bf9042376649756d00a4818b872305d47cc9d6d186dce12f0c0a3b
